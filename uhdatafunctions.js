@@ -117,5 +117,5 @@ function doctoralList(data) {
   return _.filter(data, isDoctoralDegree);
 }
 function doctoralDegreePrograms(data) {
-  return _.uniqe(_.pluck(doctoralList(data, "CIP_DESC")));
+  return _.unique(_.pluck(doctoralList(data, "CIP_DESC")));
 }

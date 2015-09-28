@@ -6,17 +6,17 @@ Provides seven functions with analytics to compute data for [UH degrees] (http:/
 
 Provide the following scrpits in HTML files
 
-"""
+'''
 <script src="//philipmjohnson.github.io/ics314f15/morea/underscore/underscore-min.js"></script>
 <script src="//philipmjohnson.github.io/ics314f15/morea/underscore/uhdata.js"></script>
 <script src="uhdatafunctions.js"></script>
-"""
+'''
 
 #Usage
 
 Here are example calls:
 
-"""
+'''
 <script>
     console.log("Total Degrees", totalDegrees(uhdata));
     console.log("Percentage Hawaiian", percentageHawaiian(uhdata));
@@ -26,7 +26,7 @@ Here are example calls:
     console.log("Max Degrees", maxDegrees(uhdata));
     console.log("Doctoral Degree Programs", doctoralDegreePrograms(uhdata));
 </script>
-"""
+'''
 
 Consult uhdatafunctions.js file for more details
 
