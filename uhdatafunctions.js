@@ -1,6 +1,5 @@
 /* globals _, uhdata */
-/* exported testdata, maxDegrees, percentageHawaiian, listCampusDegrees, listCampuses, doctoralDegreePrograms */
-
+/* exported testdata, maxDegrees, percentageHawaiian, listCampusDegrees, listCampuses, doctoralDegreePrograms, totalDegreesByYear */
 
 /**
  * Analytics for UH data sets
@@ -35,51 +34,80 @@ function totalDegrees(data) {
 function isHawaiian(record) {
   return record ["HAWAIIAN_LEGACY"] === "HAWAIIAN";
 }
-
+/**
+ * A function that returns a dataset maching all records that have Hawaiian legacy
+ * @param dataThe UH data record
+ * @returns {Array.<T>|*} All record with Hawaiian Legacy
+ */
 function hawaiianLegacy(data) {
   return _.filter(data, isHawaiian);
 }
-
+/**
+ * Finds the total amount of degrees given to those with Hawaiian Legacy
+ * @param data The UH data record
+ * @returns {*} the total amount of degrees
+ */
 function totalHawaiianLegacy(data) {
   return _.reduce(hawaiianLegacy(data), addDegrees, 0);
 }
-
+/**
+ * Compares how many degrees were given to Hawaiians versus all studdents
+ * @param data The UH data record
+ * @returns {number} the percentage of degrees given to Hawaiians
+ */
 function percentageHawaiian(data) {
   return (totalHawaiianLegacy(data) / totalDegrees(data)) * 100;
 }
-
+/**
+ * Filters records for a specific year
+ * @param year The year being examined
+ * @returns {Function} true if the record is of that year
+ */
 function makeYearFilter(year) {
   return function (record) {
     return record["FISCAL_YEAR"] === year;
   };
 }
+/**
+ * Displays all data for a given year
+ * @param data The UH data record
+ * @param year the year to examine
+ * @returns {Array.<T>|*} An object containing the data for a given yyear
+ */
 function dataForYear(data, year) {
   return _.filter(data, makeYearFilter(year));
 }
-
+/**
+ * Gives the total amount of degrees given out each year
+ * @param data The UH data record
+ * @param year the year to examine
+ * @returns {*} a value indicating the amount of degrees awareded for the year
+ */
 function totalDegreesByYear(data, year) {
   return _.reduce(dataForYear(data, year), addDegrees, 0);
 }
-console.log(totalDegreesByYear(uhdata, 2014));
 
-//listCampuses(data). This function can be passed uhdata and returns an array containing all the campuses referenced in the passed dataset.
-//pluck the campus value into an array
-//remove duplicates using uniq
-
+/**
+ * Finds all campuses in the dataset
+ * @param data The UH data record
+ * @returns {*} a unique array of each campus
+ */
 function listCampuses(data) {
   return _.unique(_.pluck(data, "CAMPUS"));
 }
-
-//console.log(listCampuses(uhdata));
-
-//listCampusDegrees(data) returns object. property keys are campuses and values are number of degrees awarded 
-//group all records by campus  keys are campus, keys are aray
-//reduce array of records to total number of degrees
-
+/**
+ * Groups data records by the campus
+ * @param data The UH data record
+ * @returns {*} an object of records grouped by campus
+ */
 function groupByCampus(data) {
   return _.groupBy(data, "CAMPUS");
 }
-
+/**
+ * Provides the sum of degrees awared from each campus
+ * @param data The UH data record
+ * @returns {*} the sum of each campus's degrees
+ */
 function listCampusDegrees(data) {
   return _.mapObject(groupByCampus(data),
       function (val) {
@@ -87,35 +115,46 @@ function listCampusDegrees(data) {
       });
 }
 
-//maxDegrees(data)
-//group all record by year
-//reduce to get object with years as key and number degrees 
-// get the max
-
+/**
+ * groups data by the year awarded
+ * @param data The UH data record
+ * @returns {*} records grouped by year
+ */
 function groupByYear(data) {
   return _.groupBy(data, "FISCAL_YEAR");
 }
-
+/**
+ * Finds the year where the most degrees were awarded
+ * @param data The UH data record
+ * @returns {number} the year with the most degrees awarded
+ */
 function maxDegrees(data) {
   return _.max(_.mapObject(groupByYear(data),
       function (val) {
         return _.reduce(val, addDegrees, 0);
       }));
 }
-
-//doctoralDegreePrograms returns list of degree programs for which doctoral degree is provided
-//filter by records with doctoral degreeOUTCOME === "doctoral degrees"
-//pluck CIP_DESC
-//remove dups
-
-//predicate for doctoralList
+/**
+ * Predacit function returning true if the degree is part of a doctorate program
+ * @param record The UH data record
+ * @returns {boolean} returns true if the degree is part of the doctorate program
+ */
 function isDoctoralDegree(record) {
   return record["OUTCOME"] === "Doctoral Degrees";
 }
-
+/**
+ * Filters out only programs with doctoral degreess
+ * @param dataThe UH data record
+ * @returns {Array.<T>|*} returns array of programs with doctoral degrees
+ */
 function doctoralList(data) {
   return _.filter(data, isDoctoralDegree);
 }
+/**
+ * provides a list of a specific type of doctoral degree
+ * @param data The UH data record
+ * @returns {*}a list of doctoral degrees
+ */
 function doctoralDegreePrograms(data) {
   return _.unique(_.pluck(doctoralList(data, "CIP_DESC")));
 }
