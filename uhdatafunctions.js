@@ -6,7 +6,7 @@
  * A small set of records from UH data set
  * @type {string}
  */
-var testdata = uhdata.slice(0, 2).concat(_.find(uhdata, isHawaiian));
+//var testdata = uhdata.slice(0, 2).concat(_.find(uhdata, isHawaiian));
 
 /**
  *REDUCTION FUNCTION FOR ACCUMULATING DEGREES
@@ -15,7 +15,17 @@ var testdata = uhdata.slice(0, 2).concat(_.find(uhdata, isHawaiian));
  * @returns the total of the  accumulator
  */
 function addDegrees(memo, record) {
+  if(isNaN(record["AWARDS"])){
+    throw new Error("non-numeric awards");
+  }
   return memo + record["AWARDS"];   //memo is whats geting added to
+}
+/**
+ * returns true if past record has awards field
+ * @param record true if has awards fields
+ */
+function hasAwards(record) {
+  return record.hasOwnProperty("AWARDS");
 }
 
 /**
@@ -24,6 +34,9 @@ function addDegrees(memo, record) {
  * @returns {*} The total number of degrees
  */
 function totalDegrees(data) {
+  if (!_.every(data, hasAwards)) {
+    throw new Error("No AWARDS field.");
+  }
   return _.reduce(data, addDegrees, 0);
 }
 /**
